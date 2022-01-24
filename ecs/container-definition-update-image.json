@@ -3,8 +3,8 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "ch-dev-log-group",
-          "awslogs-region": "eu-west-1",
+          "awslogs-group": "DevOps-Test-Jenkins-ECS-LG",
+          "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
       },
