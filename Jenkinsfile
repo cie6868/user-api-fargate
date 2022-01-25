@@ -29,7 +29,7 @@ pipeline {
         AWS_ECS_CPU = '256'
         AWS_ECS_MEMORY = '512'
         AWS_ECS_TASK_DEFINITION_PATH = './ecs/container-definition-update-image.json'
-        AWS_ECS_EXECUTION_ROLE = 'eh'
+        AWS_ECS_EXECUTION_ROLE = 'AWSServiceRoleForECS'
     }
 
     stages {
