@@ -23,7 +23,7 @@ pipeline {
         AWS_ECR_URL = '760761285600.dkr.ecr.us-east-1.amazonaws.com/devops-test-jenkins-ecs'
         AWS_ECS_CLUSTER = 'DevOps-Test-ECS'
         AWS_ECS_SERVICE = 'DevOps-Test-ECS-Service'
-        AWS_ECS_TASK_DEFINITION = 'first-run-task-definition'
+        AWS_ECS_TASK_DEFINITION = 'test-task-definition'
         AWS_ECS_COMPATIBILITY = 'FARGATE'
         AWS_ECS_NETWORK_MODE = 'awsvpc'
         AWS_ECS_CPU = '256'
