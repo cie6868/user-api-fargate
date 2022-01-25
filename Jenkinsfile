@@ -33,6 +33,7 @@ pipeline {
     stages {
         stage('Build & Test') {
             steps {
+                echo 'Build & Test'
                 withMaven(options: [artifactsPublisher(), mavenLinkerPublisher(), dependenciesFingerprintPublisher(disabled: true), jacocoPublisher(disabled: true), junitPublisher(disabled: true)]) {
                     sh "mvn -B -U clean package"
                 }
@@ -41,11 +42,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                node {
-                    withCredentials([string(credentialsId: 'AWS_REPOSITORY_URL_SECRET', variable: 'AWS_ECR_URL')]) {
-                        script {
-                            docker.build("${AWS_ECR_URL}:${POM_VERSION}", "--build-arg JAR_FILE=${JAR_NAME} .")
-                        }
+                echo 'Build Docker Image'
+                withCredentials([string(credentialsId: 'AWS_REPOSITORY_URL_SECRET', variable: 'AWS_ECR_URL')]) {
+                    script {
+                        docker.build("${AWS_ECR_URL}:${POM_VERSION}", "--build-arg JAR_FILE=${JAR_NAME} .")
                     }
                 }
             }
@@ -53,6 +53,7 @@ pipeline {
 
         stage('Push image to ECR') {
             steps {
+                echo 'Push image to ECR'
                 withCredentials([string(credentialsId: 'AWS_REPOSITORY_URL_SECRET', variable: 'AWS_ECR_URL')]) {
                     withAWS(region: "${AWS_ECR_REGION}", credentials: 'personal-aws-ecr') {
                         script {
@@ -67,6 +68,7 @@ pipeline {
 
         stage('Deploy in ECS') {
             steps {
+                echo 'Deploy in ECS'
                 withCredentials([string(credentialsId: 'AWS_EXECUTION_ROL_SECRET', variable: 'AWS_ECS_EXECUTION_ROL'),string(credentialsId: 'AWS_REPOSITORY_URL_SECRET', variable: 'AWS_ECR_URL')]) {
                     script {
                         updateContainerDefinitionJsonWithImageVersion()
@@ -81,6 +83,7 @@ pipeline {
 
     post {
         always {
+            echo 'Post'
             withCredentials([string(credentialsId: 'AWS_REPOSITORY_URL_SECRET', variable: 'AWS_ECR_URL')]) {
                 junit allowEmptyResults: true, testResults: 'target/surfire-reports/*.xml'
                 publishHTML([allowMissing: true, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/site/jacoco-ut/', reportFiles: 'index.html', reportName: 'Unit Testing Coverage', reportTitles: 'Unit Testing Coverage'])
